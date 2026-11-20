@@ -23,12 +23,23 @@ jobs:
             nix flake update
           fi
 
+      # Plain script instead of nix-update: nix-update's flake mode fails on
+      # recent Nix ("opening file /nix/store/...-source: No such file")
       - name: Update Jackify
         id: update
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          old=$(nix eval --raw .#jackify.version)
-          nix run nixpkgs#nix-update -- --flake jackify
-          new=$(nix eval --raw .#jackify.version)
+          set -euo pipefail
+          old=$(sed -nE 's/^  version = "([^"]+)";$/\1/p' package.nix)
+          tag=$(gh api repos/Omni-guides/Jackify/releases/latest --jq .tag_name)
+          new=${tag#v}
+          if [ "$old" != "$new" ]; then
+            url="https://github.com/Omni-guides/Jackify/releases/download/$tag/Jackify.AppImage"
+            hash=$(nix store prefetch-file --json "$url" | jq -r .hash)
+            sed -i -E "s|^  version = \"[^\"]+\";$|  version = \"$new\";|" package.nix
+            sed -i -E "s|^    hash = \"sha256-[^\"]+\";$|    hash = \"$hash\";|" package.nix
+          fi
           if [ "$old" != "$new" ]; then
             title="jackify: $old -> $new"
             body="Changelog: https://github.com/Omni-guides/Jackify/releases/tag/v$new"
