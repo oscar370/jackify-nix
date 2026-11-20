@@ -32,15 +32,18 @@ It stays in the Nix store until the next `nix-collect-garbage`.
 
 Independent of this package, Jackify itself creates:
 
-- `~/.local/share/applications/com.jackify.app.desktop`: registers itself as handler for `jackify://` (Nexus OAuth) **and `nxm://`** (this replaces any other mod manager's nxm handler)
+- `~/.local/share/applications/com.jackify.app.desktop` and `~/.local/share/icons/hicolor/256x256/apps/com.jackify.app.png`
+- entries in `~/.config/mimeapps.list` making it the handler for `jackify://` (Nexus OAuth) **and `nxm://`** (this replaces any other mod manager's nxm handler)
 - `~/Jackify/`: logs, a copy of jackify-engine, downloaded tools
 - `~/.config/jackify/`: configuration
 
 To clean up after use:
 
 ```sh
-rm ~/.local/share/applications/com.jackify.app.desktop
-update-desktop-database ~/.local/share/applications
+rm -f ~/.local/share/applications/com.jackify.app.desktop \
+      ~/.local/share/icons/hicolor/256x256/apps/com.jackify.app.png
+sed -i -E '/^x-scheme-handler\/(jackify|nxm)=com\.jackify\.app\.desktop;?$/d' ~/.config/mimeapps.list
+nix shell nixpkgs#desktop-file-utils -c update-desktop-database ~/.local/share/applications
 rm -rf ~/Jackify ~/.config/jackify
 ```
 
