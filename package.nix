@@ -8,11 +8,11 @@
 
 let
   pname = "jackify";
-  version = "0.8.1.3";
+  version = "0.8.2";
 
   src = fetchurl {
     url = "https://github.com/Omni-guides/Jackify/releases/download/v${version}/Jackify.AppImage";
-    hash = "sha256-Z3T4Gu3WxnyMOO7kIF/BSXGJfNurmcZULTWCl4rzlTI=";
+    hash = "sha256-YbbMigpv96nTJPdkw8+103CzVhNW8KvSyEIXYfvW52Q=";
   };
 
   appimageContents = appimageTools.extract {
