@@ -42,7 +42,15 @@ appimageTools.wrapAppImage {
   # `python3` on PATH and runs the bundled site-packages (built for 3.10,
   # but PySide6/shiboken6/psutil are abi3 and the few cpython-310 modules
   # have pure-Python fallbacks) with `python3 -S`.
-  extraPkgs = pkgs: [ pkgs.python3 ];
+  #
+  # Jackify registers its jackify:// and nxm:// handlers by calling
+  # update-desktop-database, xdg-mime and xdg-settings; if the first one is
+  # missing, the OAuth registration aborts before reaching xdg-mime.
+  extraPkgs = pkgs: [
+    pkgs.python3
+    pkgs.desktop-file-utils
+    pkgs.xdg-utils
+  ];
 
   # Jackify runs Proton's wine directly (winetricks, registry fixes) from
   # inside this FHS env; without the 32-bit side it fails with
@@ -75,6 +83,6 @@ appimageTools.wrapAppImage {
     sourceProvenance = with lib.sourceTypes; [ binaryNativeCode ];
     platforms = [ "x86_64-linux" ];
     mainProgram = "jackify";
-    maintainers = [ "oscar370" ];
+    maintainers = [ "oscar370 " ];
   };
 }
