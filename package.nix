@@ -83,6 +83,6 @@ appimageTools.wrapAppImage {
     sourceProvenance = with lib.sourceTypes; [ binaryNativeCode ];
     platforms = [ "x86_64-linux" ];
     mainProgram = "jackify";
-    maintainers = [ "oscar370 " ];
+    maintainers = [ ];
   };
 }
